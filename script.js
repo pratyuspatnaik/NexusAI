@@ -202,9 +202,9 @@ function graph(entities, rels) {
   entities.forEach((e, i) => { const a = (i / entities.length) * 6.283 - 1.57; pos[e] = [cx + R * 1.5 * Math.cos(a), cy + R * Math.sin(a)]; });
   const lines = rels.filter(r => pos[r[0]] && pos[r[1]]).map(([a, b, l]) => {
     const [x1, y1] = pos[a], [x2, y2] = pos[b];
-    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#cfcbc0" stroke-width="1.5"/><text x="${(x1 + x2) / 2}" y="${(y1 + y2) / 2 - 3}" font-size="9" fill="#6b6f76" text-anchor="middle">${esc(l)}</text>`;
+    return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--edge)" stroke-width="1.5"/><text x="${(x1 + x2) / 2}" y="${(y1 + y2) / 2 - 3}" font-size="9" fill="var(--mut)" text-anchor="middle">${esc(l)}</text>`;
   }).join('');
-  const nodes = entities.map(e => `<g><rect x="${pos[e][0] - 40}" y="${pos[e][1] - 12}" width="80" height="24" rx="12" fill="#e3f0ee" stroke="#1f5f5b"/><text x="${pos[e][0]}" y="${pos[e][1] + 4}" font-size="10.5" text-anchor="middle" fill="#1c1e21">${esc(e)}</text></g>`).join('');
+  const nodes = entities.map(e => `<g><rect x="${pos[e][0] - 40}" y="${pos[e][1] - 12}" width="80" height="24" rx="12" fill="var(--acc-s)" stroke="var(--acc)"/><text x="${pos[e][0]}" y="${pos[e][1] + 4}" font-size="10.5" text-anchor="middle" fill="var(--ink)">${esc(e)}</text></g>`).join('');
   return `<svg viewBox="0 0 380 240" role="img" aria-label="Entity relationship graph" style="width:100%;height:auto">${lines}${nodes}</svg>`;
 }
 
@@ -218,11 +218,11 @@ V.req = () => {
     : state.analyzed[state.pid]
       ? `<div class="card row sp"><div><h3>Project ready: ${esc(p.name)}</h3><p class="mut sm">Requirement analyzed. ${esc(p.impact)}</p></div><button class="btn pri" data-act="goto" data-v="und">Review understanding</button></div>`
       : `<div class="empty">No requirement submitted for this project yet.</div>`;
-  return `<div class="hero"><h1>What do you want to get done?</h1><p class="mut">Describe a system to build or a change to handle. Loom adapts its knowledge, tools, and agents to the domain.</p></div>
+  return `<div class="hero"><p class="eyebrow">Loom</p><h1>What do you want to get done?</h1><p class="mut">Describe a system to build or a change to handle. Loom adapts its knowledge, tools, and agents to the domain.</p></div>
   <form class="composer" data-form="req"><label class="sr" for="reqText">Requirement</label>
     <textarea id="reqText" placeholder="Describe your requirement in plain language…">${esc(state.draft)}</textarea>
     <div class="row sp"><span class="mut sm">Simulated analysis. No model is called in this prototype.</span><button class="btn pri" ${state.analyzing ? 'disabled' : ''}>Analyze requirement</button></div></form>
-  ${state.error ? `<div class="appr" style="max-width:820px;margin:0 auto 16px;background:var(--red-s);border-color:#f2b8b3"><b>Couldn’t map this to a domain.</b> Try naming modules or entities, for example “student management and fee tracking”, or pick an example below.</div>` : ''}
+  ${state.error ? `<div class="appr" style="max-width:820px;margin:0 auto 16px;background:var(--red-s);border-color:var(--red-line)"><b>Couldn’t map this to a domain.</b> Try naming modules or entities, for example “student management and fee tracking”, or pick an example below.</div>` : ''}
   <div style="max-width:820px;margin:0 auto" class="grid">
     <div><h3 style="margin-bottom:8px">Try an example</h3><div class="chips">${EXAMPLES.map((e, i) => `<button class="chip" data-act="example" data-i="${i}">${esc(e.length > 70 ? e.slice(0, 68) + '…' : e)}</button>`).join('')}</div></div>
     ${status}
@@ -309,10 +309,8 @@ function emptyState(t, d, to, label) { return `<div class="empty" style="margin-
 function renderShell() {
   const r = run(), done = { req: state.analyzed[state.pid], und: state.analyzed[state.pid], kn: state.analyzed[state.pid], disc: state.analyzed[state.pid], reg: toolsOf().some(t => t.registered), orch: r.status === 'done', ver: r.status === 'done' && r.res.every(x => x.s !== 'failed') };
   $('#tabs').innerHTML = TABS.map(([k, l], i) => `<button class="tab ${state.tab === k ? 'on' : ''} ${done[k] ? 'done' : ''}" data-act="goto" data-v="${k}" ${state.tab === k ? 'aria-current="page"' : ''}><span class="n">${done[k] ? '✓' : i + 1}</span>${l}</button>`).join('');
-  $('#projectSelect').innerHTML = Object.entries(PROJECTS).map(([k, p]) => `<option value="${k}" ${k === state.pid ? 'selected' : ''}>${p.name}</option>`).join('');
-  $('#bellDot').hidden = r.status !== 'waiting';
   const p = P();
-  $('#side').innerHTML = `<h4>Project</h4><div class="side-item"><b>${esc(p.short)}</b><small>${esc(p.domain)}</small></div>
+  $('#sideContent').innerHTML = `<h4>Project</h4><div class="side-item"><b>${esc(p.short)}</b><small>${esc(p.domain)}</small></div>
     <h4>Saved requirements</h4>${state.history[state.pid].map(h => `<button class="side-item" data-act="goto" data-v="req">${esc(h.text.slice(0, 44))}…</button>`).join('') || '<div class="side-item mut">None yet</div>'}
     <h4>Knowledge sources</h4>${p.docs.slice(0, 4).map(d => `<button class="side-item" data-act="goto" data-v="kn">${esc(d.src.split('/').pop())}</button>`).join('')}
     <h4>Recent executions</h4><div class="side-item">${r.status === 'done' ? `Last run ${r.audit[0].at}<small>${r.res.filter(x => x.s === 'verified').length}/${p.actions.length} verified</small>` : '<span class="mut">No runs yet</span>'}</div>`;
@@ -349,9 +347,28 @@ function toolForm(t) {
 }
 const findTool = n => toolsOf().find(t => t.name === n);
 
+const shell = $('.shell'), sidebarToggle = $('#sidebarToggle'), sideBackdrop = $('#sideBackdrop');
+let mobileSidebar = window.matchMedia('(max-width:900px)').matches;
+let sidebarExpanded = !mobileSidebar;
+function syncSidebar() {
+  const mobile = window.matchMedia('(max-width:900px)').matches;
+  if (mobile !== mobileSidebar) { mobileSidebar = mobile; sidebarExpanded = !mobile; }
+  shell.classList.toggle('sidebar-open', mobileSidebar && sidebarExpanded);
+  shell.classList.toggle('sidebar-collapsed', !mobileSidebar && !sidebarExpanded);
+  sideBackdrop.hidden = !(mobileSidebar && sidebarExpanded);
+  sidebarToggle.setAttribute('aria-expanded', String(sidebarExpanded));
+  sidebarToggle.setAttribute('aria-label', `${mobileSidebar ? (sidebarExpanded ? 'Close' : 'Open') : (sidebarExpanded ? 'Collapse' : 'Expand')} sidebar`);
+}
+function setSidebarExpanded(expanded) { sidebarExpanded = expanded; syncSidebar(); }
+sidebarToggle.addEventListener('click', () => setSidebarExpanded(!sidebarExpanded));
+sideBackdrop.addEventListener('click', () => setSidebarExpanded(false));
+window.addEventListener('resize', syncSidebar);
+syncSidebar();
+
 document.addEventListener('click', e => {
   if (e.target.id === 'modal') return closeModal();
   const b = e.target.closest('[data-act]'); if (!b) return;
+  if (mobileSidebar && b.closest('#sideContent')) setSidebarExpanded(false);
   const d = b.dataset, t = d.n && findTool(d.n);
   switch (d.act) {
     case 'goto': go(d.v); break;
@@ -402,12 +419,21 @@ document.addEventListener('change', e => {
     const f = e.target.files[0]; P().docs.unshift({ t: f.name, src: `uploads/${f.name}`, type: 'Document', score: .7, why: 'Uploaded just now. Indexing is simulated; no embeddings were created.' });
     toast('Document added (simulated indexing)'); refresh();
   }
-  if (e.target.id === 'projectSelect') { state.pid = e.target.value; state.tab = state.analyzed[state.pid] ? 'und' : 'req'; refresh(); }
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-$('#bell').addEventListener('click', () => {
-  const r = run();
-  modal(`<h2>Notifications</h2>${r.status === 'waiting' ? `<p style="margin:10px 0">Approval pending: <b>${esc(P().actions[r.steps[r.idx].ap].label)}</b></p><div class="row" style="justify-content:flex-end"><button class="btn pri" data-act="goto" data-v="orch" onclick="closeModal()">Review in orchestration</button></div>` : '<p class="mut" style="margin:10px 0">You’re all caught up.</p><div class="row" style="justify-content:flex-end"><button class="btn" data-act="close">Close</button></div>'}`);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeModal();
+    if (mobileSidebar && sidebarExpanded) setSidebarExpanded(false);
+  }
+});
+
+$('#themeToggle').addEventListener('click', e => {
+  const dark = document.documentElement.dataset.theme !== 'dark';
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  e.currentTarget.setAttribute('aria-pressed', String(dark));
+  e.currentTarget.setAttribute('aria-label', `Switch to ${dark ? 'light' : 'dark'} mode`);
+  e.currentTarget.title = `Switch to ${dark ? 'light' : 'dark'} mode`;
+  e.currentTarget.querySelector('.theme-icon').textContent = dark ? '☾︎' : '☀︎';
 });
 
 refresh();

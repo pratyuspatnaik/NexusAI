@@ -11,20 +11,24 @@
 <body>
 <header class="top">
   <div class="top-row">
-    <div class="brand"><span class="mark" aria-hidden="true"></span>Loom</div>
-    <label class="proj-pick">
-      <span class="sr">Project</span>
-      <select id="projectSelect" aria-label="Project"></select>
-    </label>
-    <div class="top-right">
-      <button class="icon-btn" id="bell" aria-label="Notifications">Alerts<span class="dot" id="bellDot" hidden></span></button>
-      <div class="avatar" title="Riya Sharma">RS</div>
-    </div>
+    <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Collapse sidebar" aria-expanded="true" aria-controls="side">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
   </div>
   <nav class="tabs" id="tabs" aria-label="Workflow stages"></nav>
 </header>
 <div class="shell">
-  <aside class="side" id="side"></aside>
+  <aside class="side" id="side" aria-label="Project sidebar">
+    <div class="side-content" id="sideContent"></div>
+    <div class="side-footer">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode"><span class="theme-icon" aria-hidden="true">☀︎</span></button>
+      <div class="account-summary">
+        <div class="avatar" title="Riya Sharma">RS</div>
+        <span>Riya Sharma</span>
+      </div>
+    </div>
+  </aside>
+  <button class="side-backdrop" id="sideBackdrop" type="button" aria-label="Close sidebar" hidden></button>
   <main id="view" tabindex="-1"></main>
 </div>
 <div class="modal-wrap" id="modal" hidden></div>
