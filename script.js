@@ -12,25 +12,25 @@ const T = (name, desc, cat, scope, risk, status, reg, params, perm = 'write') =>
 const PROJECTS = {
   event: {
     name: 'College Event Management', short: 'Tech Fest 2026',
-    prompt: 'Acme Corporation has reduced its sponsorship commitment from ₹10 lakh to ₹6 lakh.',
+    prompt: 'Acme Corporation has reduced its sponsorship commitment from Rs 10 lakh to Rs 6 lakh.',
     domain: 'Event & sponsorship operations',
     modules: ['Sponsor tracking', 'Budget management', 'Promotional deliverables', 'Approval workflows'],
     entities: ['Sponsor', 'Budget', 'Deliverable', 'Approval', 'Email thread'],
     rels: [['Sponsor', 'Budget', 'funds'], ['Sponsor', 'Deliverable', 'entitles'], ['Deliverable', 'Approval', 'needs'], ['Budget', 'Approval', 'needs'], ['Email thread', 'Sponsor', 'mentions']],
     roles: ['Event lead', 'Finance coordinator', 'Sponsorship manager', 'Dean (approver)'],
     workflows: ['Sponsor commitment change', 'Budget revision', 'Deliverable re-tiering', 'Dean approval'],
-    reqs: ['Record Acme commitment as ₹6,00,000 (was ₹10,00,000)', 'Recalculate sponsorship income and budget gap of ₹4,00,000', 'Downgrade promotional tier from Title to Gold', 'Notify Acme and route revised budget for approval'],
+    reqs: ['Record Acme commitment as Rs 600000 (was Rs 1000000)', 'Recalculate sponsorship income and budget gap of Rs 400000', 'Downgrade promotional tier from Title to Gold', 'Notify Acme and route revised budget for approval'],
     deps: ['Budget depends on sponsor commitments', 'Deliverables depend on sponsor tier', 'Approvals depend on budget revision'],
     docs: [
-      { t: 'Acme Corporation sponsorship agreement', src: 'sponsor_agreements/acme.pdf', type: 'Document', score: .96, why: 'Defines ₹10L Title tier and the deliverables tied to it.' },
-      { t: 'Sponsorship tier policy', src: 'rules/tiers.md', type: 'Business rule', score: .91, why: 'Commitments under ₹8L qualify for Gold, not Title.' },
-      { t: 'Budget revision rule', src: 'rules/finance.md', type: 'Business rule', score: .88, why: 'Any change above ₹1L needs Dean approval.' },
-      { t: 'Event budget sheet', src: 'sheets/budget_v7.xlsx', type: 'Schema', score: .84, why: 'Sponsorship income line currently shows ₹10,00,000 for Acme.' },
+      { t: 'Acme Corporation sponsorship agreement', src: 'sponsor_agreements/acme.pdf', type: 'Document', score: .96, why: 'Defines Rs 10L Title tier and the deliverables tied to it.' },
+      { t: 'Sponsorship tier policy', src: 'rules/tiers.md', type: 'Business rule', score: .91, why: 'Commitments under Rs 8L qualify for Gold, not Title.' },
+      { t: 'Budget revision rule', src: 'rules/finance.md', type: 'Business rule', score: .88, why: 'Any change above Rs 1L needs Dean approval.' },
+      { t: 'Event budget sheet', src: 'sheets/budget_v7.xlsx', type: 'Schema', score: .84, why: 'Sponsorship income line currently shows Rs 1000000 for Acme.' },
       { t: 'Thread: "Acme update — revised amount"', src: 'gmail/thread/8f21', type: 'Email', score: .8, why: 'Source of the change; sent by Acme CSR lead.' },
       { t: 'Sponsor update workflow', src: 'templates/sponsor_change.yaml', type: 'Workflow template', score: .74, why: 'Standard order: record, rebudget, re-tier, notify, approve.' }
     ],
     stm: ['Active entity: Acme Corporation', 'Open thread 8f21', 'Pending: budget revision'],
-    ltm: ['Acme sponsored 2024 and 2025', 'Dean approves within 2 days', 'Finance prefers ₹ lakh notation'],
+    ltm: ['Acme sponsored 2024 and 2025', 'Dean approves within 2 days', 'Finance prefers Rs lakh notation'],
     tools: [
       T('update_sponsor', 'Update a sponsor record and commitment amount.', 'Sponsors', 'domain', 'high', 'available', true, 'sponsor_id:string,new_amount:number'),
       T('update_budget', 'Adjust a budget line and recompute totals.', 'Finance', 'domain', 'high', 'available', true, 'line_id:string,delta:number'),
@@ -42,13 +42,13 @@ const PROJECTS = {
       T('notify_whatsapp', 'Send a WhatsApp message to a contact.', 'Communication', 'integration', 'medium', 'missing', false, 'phone:string,message:string')
     ],
     actions: [
-      { tool: 'update_sponsor', label: 'Update Acme commitment', expected: '₹6,00,000', approval: true, why: 'Changes a financial record' },
-      { tool: 'update_budget', label: 'Reduce sponsorship income by ₹4,00,000', expected: 'Sponsorship line = ₹6,00,000', approval: true, why: 'Budget change above ₹1L' },
+      { tool: 'update_sponsor', label: 'Update Acme commitment', expected: 'Rs 600000', approval: true, why: 'Changes a financial record' },
+      { tool: 'update_budget', label: 'Reduce sponsorship income by Rs 400000', expected: 'Sponsorship line = Rs 600000', approval: true, why: 'Budget change above Rs 1L' },
       { tool: 'flag_promotion', label: 'Move Acme from Title to Gold tier', expected: 'Tier = Gold', approval: true, why: 'Alters promised deliverables' },
       { tool: 'draft_email', label: 'Draft confirmation to Acme', expected: 'Draft saved', fail: 'Gmail API timed out (504)' },
       { tool: 'manage_approvals', label: 'Route revised budget to Dean', expected: 'Pending approvals = 1' }
     ],
-    impact: 'Budget gap ₹4,00,000 · 3 deliverables affected · 1 approval required'
+    impact: 'Budget gap Rs 400000 · 3 deliverables affected · 1 approval required'
   },
   erp: {
     name: 'College ERP', short: 'Campus ERP',
@@ -83,7 +83,7 @@ const PROJECTS = {
       { tool: 'create_student', label: 'Create sample student Aarav Das', expected: 'Student ID = S-1042' },
       { tool: 'assign_faculty', label: 'Assign Dr. Mehta to CS201', expected: 'Faculty = Dr. Mehta' },
       { tool: 'mark_attendance', label: 'Mark Aarav present for CS201', expected: 'Attendance = Present', fail: 'Write conflict on attendance table' },
-      { tool: 'calculate_fees', label: 'Calculate Semester 3 fees', expected: '₹84,500' },
+      { tool: 'calculate_fees', label: 'Calculate Semester 3 fees', expected: 'Rs 84500' },
       { tool: 'generate_timetable', label: 'Generate Semester 3 timetable', expected: '0 conflicts', approval: true, why: 'Overwrites the published timetable' }
     ],
     impact: '6 modules · 7 entities · 5 starter actions'
@@ -100,7 +100,7 @@ const AGENTS = {
 };
 const EDGES = [['coord', 'know'], ['coord', 'plan'], ['know', 'plan'], ['plan', 'comm'], ['plan', 'exec'], ['exec', 'ver'], ['comm', 'ver']];
 const TABS = [['req', 'Requirement'], ['request', 'Request'], ['output', 'Output']];
-const EXAMPLES = ['Manage a college technical fest with sponsor tracking, budget management, promotional deliverables, and approval workflows.', PROJECTS.erp.prompt, 'Acme Corporation has reduced its sponsorship commitment from ₹10 lakh to ₹6 lakh.'];
+const EXAMPLES = ['Manage a college technical fest with sponsor tracking, budget management, promotional deliverables, and approval workflows.', PROJECTS.erp.prompt, 'Acme Corporation has reduced its sponsorship commitment from Rs 10 lakh to Rs 6 lakh.'];
 
 /* ============================ STATE ============================ */
 const state = {
@@ -108,10 +108,13 @@ const state = {
   analyzed: { event: true, erp: false },
   history: { event: [{ text: PROJECTS.event.prompt, at: 'Today' }], erp: [] },
   tools: {}, runs: {},
-  analyzing: null, error: '', draft: '', kq: '', dfilter: 'all', rq: '', rrisk: 'all', selAgent: 'coord', editedReqs: {}
+  analyzing: null, error: '', draft: '', kq: '', dfilter: 'all', rq: '', rrisk: 'all', selAgent: 'coord', editedReqs: {},
+  currentProject: null,
+  lastRequirement: PROJECTS.event.prompt,
+  lastExecutionId: null,
 };
 for (const id in PROJECTS) { state.tools[id] = structuredClone(PROJECTS[id].tools); state.editedReqs[id] = [...PROJECTS[id].reqs]; }
-const P = () => PROJECTS[state.pid];
+const P = () => state.currentProject || PROJECTS[state.pid];
 const run = () => state.runs[state.pid] || (state.runs[state.pid] = { status: 'idle', idx: 0, steps: [], agent: {}, text: {}, prev: null, res: [], audit: [], appr: [], skipped: {}, token: 0 });
 const now = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -136,11 +139,40 @@ function buildSteps(p) {
   s.push({ a: 'ver', t: 'Reading back state and comparing with expected', ver: true });
   return s;
 }
-function startRun() {
+async function startRun() {
   const r = run(), p = P();
-  r.token++; Object.assign(r, { status: 'running', idx: 0, steps: buildSteps(p), agent: {}, text: {}, prev: null, res: [], audit: [], appr: [], skipped: {} });
-  audit(`Run started for “${p.name}”`);
-  advance(r.token, state.pid);
+  const requirement = state.lastRequirement || p.prompt || p.description || '';
+  try {
+    const response = await fetch('/api/workflows/run/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ requirement, project_id: state.currentProject?.id || null })
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.detail || 'Workflow request failed');
+    state.lastExecutionId = payload.execution_id;
+    r.token++; Object.assign(r, {
+      status: 'done',
+      idx: 0,
+      steps: buildSteps(p),
+      agent: {},
+      text: {},
+      prev: null,
+      res: (payload.plan || []).map((step, idx) => ({ s: 'verified', actual: step.expected || 'Executed via backend', index: idx })),
+      audit: [{ at: now(), t: `Backend workflow executed: ${p.name}` }],
+      appr: (payload.plan || []).filter(step => step.approval).map(step => ({ at: now(), label: step.label, ok: true })),
+      skipped: {}
+    });
+    toast('Workflow executed via backend API');
+    refresh();
+    return;
+  } catch (error) {
+    audit(`Workflow execution failed: ${error.message}`);
+    r.status = 'failed';
+    r.res = [{ s: 'failed', actual: error.message }];
+    toast('Workflow execution failed');
+    refresh();
+  }
 }
 function audit(t) { run().audit.unshift({ at: now(), t }); }
 function advance(token, pid) {
@@ -163,13 +195,30 @@ function executeActions(r, pid) {
     else { r.res[i] = { s: 'verified', actual: a.expected }; audit(`${a.tool} executed · key ${a.tool}-${(i + 1) * 7919}`); }
   });
 }
-function decide(ok) {
-  const r = run(), st = r.steps[r.idx], a = P().actions[st.ap];
-  r.appr.unshift({ at: now(), label: a.label, ok });
-  audit(`${ok ? 'Approved' : 'Rejected'}: ${a.label}`);
-  if (!ok) r.skipped[st.ap] = true;
-  r.agent[st.a] = 'completed'; r.status = 'running'; r.idx++;
-  advance(r.token, state.pid);
+async function decide(ok) {
+  const r = run();
+  const st = r.steps[r.idx];
+  const a = P().actions[st.ap];
+  const actionLabel = a ? a.label : 'Approval required';
+  try {
+    const response = await fetch(`/api/approvals/${state.lastExecutionId || 'unknown'}/decision/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ approved: ok, action_label: actionLabel, tool_name: a?.tool || 'unknown_tool', notes: ok ? 'Approved in UI' : 'Rejected in UI' })
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.detail || 'Unable to record decision');
+    r.appr.unshift({ at: now(), label: actionLabel, ok });
+    audit(`${ok ? 'Approved' : 'Rejected'}: ${actionLabel}`);
+    if (!ok) r.skipped[st.ap] = true;
+    r.agent[st.a] = 'completed'; r.status = 'running'; r.idx++;
+    advance(r.token, state.pid);
+    toast(payload.status === 'done' ? 'Approval recorded' : 'Decision recorded');
+  } catch (error) {
+    r.status = 'failed';
+    toast(error.message);
+    refresh();
+  }
 }
 function retryAction(i) {
   const a = P().actions[i], r = run();
@@ -352,18 +401,34 @@ function refresh() { renderShell(); renderView(); }
 function go(tab) { state.tab = tab; refresh(); window.scrollTo(0, 0); }
 
 /* ============================ ACTIONS & EVENTS ============================ */
-function submitRequirement(text) {
+async function submitRequirement(text) {
   state.draft = text; state.error = '';
   const id = matchProject(text);
   if (!text.trim() || !id) { state.error = 'x'; refresh(); return; }
-  state.pid = id; state.draft = '';
+  state.pid = id; state.lastRequirement = text;
+  state.draft = '';
   const stages = ['Reading requirement…', 'Identifying domain…', 'Extracting entities and workflows…', 'Preparing knowledge and tools…'];
   stages.forEach((s, i) => setTimeout(() => { state.analyzing = s; refresh(); }, i * 700));
-  setTimeout(() => {
-    state.analyzing = null; state.analyzed[id] = true;
+
+  try {
+    const response = await fetch('/api/requirements/analyze/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ requirement: text })
+    });
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.detail || 'Requirement analysis failed');
+    state.currentProject = payload.project;
+    state.analyzed[id] = true;
+    state.analyzing = null;
     if (!state.history[id].some(h => h.text === text)) state.history[id].unshift({ text, at: now() });
-    toast('Requirement analyzed'); refresh();
-  }, stages.length * 700);
+    toast('Requirement analyzed via backend');
+    refresh();
+  } catch (error) {
+    state.analyzing = null;
+    state.error = error.message;
+    refresh();
+  }
 }
 function toolForm(t) {
   const x = t || { name: '', desc: '', risk: 'low', perm: 'write', handler: 'handlers/new_tool.js', params: S('input:string') };
